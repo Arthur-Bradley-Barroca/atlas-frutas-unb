@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atlas das Frutas Faladas — Expressões Idiomáticas do Brasil</title>
+  <meta name="description" content="Um atlas interativo das expressões idiomáticas da língua portuguesa do Brasil, com foco em expressões que envolvem frutas e alimentos.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="cabecalho">
+    <p class="selo">Linguística · Atlas Digital</p>
+    <h1 class="titulo">Atlas das Frutas Faladas</h1>
+    <p class="subtitulo">
+      Expressões idiomáticas da língua portuguesa do Brasil que envolvem
+      frutas, legumes e oleaginosas — uma viagem pelas palavras que tropeçam
+      na fala cotidiana.
+    </p>
+  </header>
+
+  <main>
+    <section class="secao-busca" aria-label="Buscar expressões">
+      <form id="formulario-busca" class="formulario-busca">
+        <label for="campo-busca" class="rotulo-campo">Buscar por expressão ou fruta</label>
+        <div class="linha-busca">
+          <input
+            type="text"
+            id="campo-busca"
+            class="campo-busca"
+            placeholder="Ex.: abacate, de caju em caju, banana..."
+            autocomplete="off"
+          >
+          <button type="submit" id="botao-buscar" class="botao-buscar">Explorar</button>
+        </div>
+      </form>
+
+      <div class="sugestoes">
+        <span class="sugestoes-rotulo">Frutas para explorar:</span>
+        <div class="chips" id="lista-sugestoes">
+          <button type="button" class="chip" data-titulo="Abacate">Abacate</button>
+          <button type="button" class="chip" data-titulo="Caju">Caju</button>
+          <button type="button" class="chip" data-titulo="Banana">Banana</button>
+          <button type="button" class="chip" data-titulo="Limão">Limão</button>
+          <button type="button" class="chip" data-titulo="Manga">Manga</button>
+          <button type="button" class="chip" data-titulo="Laranja">Laranja</button>
+          <button type="button" class="chip" data-titulo="Melancia">Melancia</button>
+          <button type="button" class="chip" data-titulo="Goiaba">Goiaba</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao-mapa" aria-label="Mapa de ocorrências">
+      <div class="mapa-container">
+        <h2 class="titulo-mapa">Mapa de Ocorrências</h2>
+        <p class="subtit-mapa">
+          Clique em uma região para ver as expressões identificadas nela.
+        </p>
+        <div class="mapa-brasil" id="mapa-brasil">
+          <div class="mapa-grid">
+            <div class="estadoestado estado-norte" data-regiao="norte" tabindex="0" role="button" aria-label="Região Norte">
+              <div class="estado-shape"></div>
+              <span class="estado-nome">Norte</span>
+              <span class="estado-sigla">AM · RR · AP · PA · RO · AC · TO</span>
+            </div>
+            <div class="estadoestado estado-nordeste" data-regiao="nordeste" tabindex="0" role="button" aria-label="Região Nordeste">
+              <div class="estado-shape"></div>
+              <span class="estado-nome">Nordeste</span>
+              <span class="estado-sigla">AL · BA · CE · MA · PB · PE · PI · RN · SE</span>
+            </div>
+            <div class="estadoestado estado-sudeste" data-regiao="sudeste" tabindex="0" role="button" aria-label="Região Sudeste">
+              <div class="estado-shape"></div>
+              <span class="estado-nome">Sudeste</span>
+              <span class="estado-sigla">ES · MG · RJ · SP</span>
+            </div>
+            <div class="estadoestado estado-sul" data-regiao="sul" tabindex="0" role="button" aria-label="Região Sul">
+              <div class="estado-shape"></div>
+              <span class="estado-nome">Sul</span>
+              <span class="estado-sigla">PR · RS · SC</span>
+            </div>
+            <div class="estadoestado estado-centro-oeste" data-regiao="centro-oeste" tabindex="0" role="button" aria-label="Região Centro-Oeste">
+              <div class="estado-shape"></div>
+              <span class="estado-nome">Centro-Oeste</span>
+              <span class="estado-sigla">DF · GO · MT · MS</span>
+            </div>
+          </div>
+          <div class="lenda-mapa">
+            <span class="lenda-item"><span class="ponto ativo"></span> Encontrada na região</span>
+            <span class="lenda-item"><span class="ponto inativo"></span> Não identificada</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="secao-regiao-selecionada" class="secao-regiao" style="display: none;">
+        <h3 class="titulo-regiao">Expressões na <span id="nome-regiao"></span></h3>
+        <p class="subtit-regiao">
+          Expressões idiomáticas identificadas nesta região, com exemplos reais de uso.
+        </p>
+        <div id="expressoes-regiao" class="grade-expressoes-regiao"></div>
+      </div>
+    </section>
+
+    <section class="secao-todas" aria-label="Todas as expressões">
+      <div id="resultado" class="grade-resultados">
+        <p class="estado-vazio">
+          Nenhuma expressão explorada ainda. Digite uma fruta ou expressão na busca,
+          ou escolha uma região no mapa acima.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p>
+      Expressões compiladas com base em corpus textual e vídeos do TikTok,
+      pesquisa "Atlas de Idiomáticas do Português do Brasil" — Elisa Duarte Teixeira (2026).
+      Exemplos de uso coletados da internet.
+      Projeto criado para fins educacionais.
+    </p>
+  </footer>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
