@@ -302,25 +302,105 @@ function hideRegiao() {
 }
 
 // ==========================================================================
-// Mapa
+// Mapa SVG - Estados
 // ==========================================================================
 
-function updateMap() {
-  estadosLista.forEach(el => {
+const svgPaths = document.querySelectorAll(".estado-path");
+const secaoEstado = document.getElementById("secao-estado-selecionado");
+const nomeEstadoEl = document.getElementById("nome-estado");
+const regiaoEstadoEl = document.getElementById("regiao-estado");
+const expressoesEstadoEl = document.getElementById("expressoes-estado");
+
+function getEstadoNome(sigla) {
+  const nomes = {
+    "AC":"Acre","AL":"Alagoas","AM":"Amazonas","AP":"Amapá","BA":"Bahia",
+    "CE":"Ceará","DF":"Distrito Federal","ES":"Espírito Santo","GO":"Goiás",
+    "MA":"Maranhão","MG":"Minas Gerais","MS":"Mato Grosso do Sul","MT":"Mato Grosso",
+    "PA":"Pará","PB":"Paraíba","PE":"Pernambuco","PI":"Piauí","PR":"Paraná",
+    "RJ":"Rio de Janeiro","RN":"Rio Grande do Norte","RO":"Rondônia",
+    "RR":"Roraima","RS":"Rio Grande do Sul","SC":"Santa Catarina","SE":"Sergipe",
+    "SP":"São Paulo","TO":"Tocantins"
+  };
+  return nomes[sigla] || sigla;
+}
+
+function getRegiaoPorEstado(sigla) {
+  const mapa = {
+    "AC":"norte","AL":"nordeste","AM":"norte","AP":"norte","BA":"nordeste",
+    "CE":"nordeste","DF":"centro-oeste","ES":"sudeste","GO":"centro-oeste",
+    "MA":"nordeste","MG":"sudeste","MS":"centro-oeste","MT":"centro-oeste",
+    "PA":"norte","PB":"nordeste","PE":"nordeste","PI":"nordeste","PR":"sul",
+    "RJ":"sudeste","RN":"nordeste","RO":"norte","RR":"norte","RS":"sul",
+    "SC":"sul","SE":"nordeste","SP":"sudeste","TO":"norte"
+  };
+  return mapa[sigla] || "desconhecida";
+}
+
+function showEstado(sigla) {
+  const nome = getEstadoNome(sigla);
+  const regiao = getRegiaoPorEstado(sigla);
+  nomeEstadoEl.textContent = nome;
+  regiaoEstadoEl.textContent = `Região: ${NOMES_REGIOES[regiao] || regiao}`;
+  const expresses = EXPRESSOES.filter(e => e.regioes.includes(regiao));
+  expressoesEstadoEl.innerHTML = expresses.length
+    ? expresses.map(cardExpressao).join("")
+    : `<p class="estado-vazio">Nenhuma expressão identificada nesta região (${NOMES_REGIOES[regiao]}).</p>`;
+  secaoEstado.style.display = "";
+  // Hide regiao section
+  secaoRegiao.style.display = "none";
+}
+
+function hideEstado() {
+  secaoEstado.style.display = "none";
+  expressoesEstadoEl.innerHTML = "";
+}
+
+// Marcar estados que têm expressões
+function marcarEstadosComExpressoes() {
+  const regioesComExpressoes = EXPRESSOES.flatMap(e => e.regioes);
+  const regioesUnicas = [...new Set(regioesComExpressoes)];
+  svgPaths.forEach(el => {
     const regiao = el.dataset.regiao;
-    el.classList.toggle("ativo", regiao === regiaoAtiva);
+    if (regioesUnicas.includes(regiao)) {
+      el.classList.add("possui-expressoes");
+    }
   });
 }
 
-estadosLista.forEach(el => {
-  el.addEventListener("click", () => {
-    const regiao = el.dataset.regiao;
-    regiaoAtiva = (regiaoAtiva === regiao) ? null : regiao;
-    updateMap();
-    if (regiaoAtiva) showRegiao(regiao);
-    else hideRegiao();
+// Event listeners para cada estado
+svgPaths.forEach(path => {
+  path.addEventListener("click", () => {
+    const sigla = path.dataset.estado;
+    path.classList.toggle("ativo-estado");
+    showEstado(sigla);
+    // Atualiza legenda das regiões
+    updateRegioesComExpressoes();
+  });
+  // Hover
+  path.addEventListener("mouseenter", () => {
+    if (!path.classList.contains("ativo-estado")) {
+      path.style.opacity = "1";
+    }
+  });
+  path.addEventListener("mouseleave", () => {
+    if (!path.classList.contains("ativo-estado")) {
+      path.style.opacity = "";
+    }
   });
 });
+
+function updateRegioesComExpressoes() {
+  // Atualiza as regiões com expressões para mostrar quais já foram clicadas
+  // Isso é opcional - pode ser usado para destacar regiões
+}
+
+// Inicializa estados com expressões
+marcarEstadosComExpressoes();
+
+// ==========================================================================
+// Mapa regiões (antigo - mantido para compatibilidade, mas agora
+// o foco é nos estados do SVG)
+// ==========================================================================
 
 // ==========================================================================
 // Eventos busca
@@ -405,5 +485,8 @@ listaFavoritos.addEventListener("click", e => {
 // ==========================================================================
 
 renderFavoritos();
-updateMap();
+marcarEstadosComExpressoes();
 showAll();
+
+// Mostrar todos os estados na primeira carga com expressões da região
+// Quando o usuário clicar no primeiro estado, tudo funciona normalmente

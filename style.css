@@ -209,91 +209,44 @@ main {
   background-color: var(--bg-secao);
   border: 2px solid var(--linha);
   border-radius: 16px;
-  padding: 2rem;
+  padding: 1.5rem;
   box-shadow: 0 4px 16px var(--sombra);
 }
 
-.mapa-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto auto;
-  gap: 1rem;
-  position: relative;
+#mapa-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
 }
 
-.mapa-grid::before {
-  content: "";
-  position: absolute;
-  top: -1rem; left: -1rem; right: -1rem; bottom: -1rem;
-  background:
-    radial-gradient(ellipse 80% 30% at 50% 0%, var(--linha) 60%, transparent 61%),
-    radial-gradient(ellipse 25% 70% at 15% 50%, var(--linha) 50%, transparent 51%),
-    radial-gradient(ellipse 25% 70% at 85% 50%, var(--linha) 50%, transparent 51%),
-    radial-gradient(ellipse 40% 50% at 75% 40%, var(--linha) 50%, transparent 51%),
-    radial-gradient(ellipse 50% 40% at 50% 35%, var(--linha) 50%, transparent 51%);
-  opacity: 0.5;
-  z-index: 0;
+.estado-path {
+  transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
-.estadoestado {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 0.75rem;
-  background-color: var(--bg-criativo);
-  border: 2.5px solid var(--linha);
-  border-radius: 12px;
+.estado-path:hover {
+  opacity: 1 !important;
+  filter: url(#glow);
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: var(--fonte-inter);
 }
 
-.estadoestado:hover {
-  border-color: var(--folha);
-  background-color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--sombra);
+.estado-path.ativo-estado {
+  opacity: 1 !important;
+  filter: url(#glow-strong);
 }
 
-.estadoestado:focus-visible {
-  outline: 3px solid var(--fruta-macia);
-  outline-offset: 3px;
+.estado-path.possui-expressoes {
+  stroke-width: 2.5;
+  stroke: #e85d3a;
 }
 
-.estadoestado.ativo {
-  border-color: var(--folha);
-  background-color: var(--folha);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(45, 106, 79, 0.3);
-}
-
-.estado-shape {
-  width: 60px;
-  height: 40px;
-  background-color: var(--linha);
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-}
-
-.estado-norte .estado-shape { width: 70px; height: 35px; border-radius: 30px 30px 6px 6px; }
-.estado-nordeste .estado-shape { width: 50px; height: 45px; border-radius: 5px; }
-.estado-sudeste .estado-shape { width: 55px; height: 50px; border-radius: 8px; }
-.estado-sul .estado-shape { width: 45px; height: 40px; border-radius: 8px; }
-.estado-centro-oeste .estado-shape { width: 48px; height: 38px; border-radius: 8px; }
-
-.estado-nome { font-size: 1rem; font-weight: 700; color: var(--tinta); }
-.estado-sigla { font-size: 0.7rem; color: var(--areia); text-align: center; line-height: 1.3; }
-
-.estadoestado.ativo .estado-nome { color: #fff; }
-.estadoestado.ativo .estado-sigla { color: rgba(255, 255, 255, 0.8); }
+/* Labels still show via SVG text elements */
 
 .lenda-mapa {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 0.75rem 1.25rem;
   margin-top: 1.5rem;
   padding-top: 1.25rem;
   border-top: 1px solid var(--linha);
@@ -303,12 +256,53 @@ main {
 }
 
 .lenda-item { display: flex; align-items: center; gap: 0.4rem; }
-.ponto { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
-.ponto.ativo { background-color: var(--folha); }
-.ponto.inativo { background-color: var(--linha); }
+.lenda-item.espacamento { margin-left: 0.75rem; padding-left: 0.75rem; border-left: 1px solid var(--linha); }
+
+.ponto {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.ponto-norte { background-color: #d9534f; }
+.ponto-nordeste { background-color: #2d6a4f; }
+.ponto-sudeste { background-color: #1976d2; }
+.ponto-sul { background-color: #f4a261; }
+.ponto-centro-oeste { background-color: #8e44ad; }
 
 /* -------------------------------------------------------------------------
-   Expressões por região
+   Secao estado selecionado
+   ------------------------------------------------------------------------- */
+
+.secao-estado {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--bg-secao);
+  border: 2px solid var(--fruta-macia);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(232, 93, 58, 0.15);
+  animation: fadeInUp 0.3s ease;
+}
+
+.titulo-estado {
+  margin: 0 0 0.2rem;
+  font-family: var(--fonte-titulo);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--fruta-macia);
+  text-align: center;
+}
+
+.subtit-estado {
+  margin: 0 0 1.25rem;
+  color: var(--areia);
+  font-size: 0.8rem;
+  text-align: center;
+  font-family: var(--fonte-inter);
+}
+
+/* -------------------------------------------------------------------------
+   Expressoes por regiao
    ------------------------------------------------------------------------- */
 
 .secao-regiao {
